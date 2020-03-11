@@ -1,0 +1,1 @@
+docker run -ti --rm --name cqhttp-arcbot -d -v $(pwd)/coolq:/home/user/coolq -p 9001:9000 -p 5701:5700 -e COOLQ_ACCOUNT=123456 -e CQHTTP_POST_URL=http://example.com:8080 -e CQHTTP_SERVE_DATA_FILES=yes richardchien/cqhttp:latest
