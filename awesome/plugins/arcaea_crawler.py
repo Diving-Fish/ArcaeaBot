@@ -6,6 +6,9 @@ import websocket
 clear_list = ['Track Lost', 'Normal Clear', 'Full Recall', 'Pure Memory', 'Easy Clear', 'Hard Clear']
 diff_list = ['PST', 'PRS', 'FTR']
 
+f = open('arc_namecache.txt', 'w')
+f.close()
+
 def load_cache():
     cache = {}
     f = open('arc_namecache.txt', 'r')
