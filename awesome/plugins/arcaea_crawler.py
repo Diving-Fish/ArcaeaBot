@@ -1,13 +1,16 @@
 import websocket
 import brotli
 import json
-import websocket
+import threading
+from nonebot import get_bot
+import asyncio
 
 clear_list = ['Track Lost', 'Normal Clear', 'Full Recall', 'Pure Memory', 'Easy Clear', 'Hard Clear']
-diff_list = ['PST', 'PRS', 'FTR']
+diff_list = ['PST', 'PRS', 'FTR', 'BYD']
 
 f = open('arc_namecache.txt', 'w')
 f.close()
+
 
 def load_cache():
     cache = {}
@@ -54,7 +57,6 @@ def lookup(nickname: str):
             cache[nickname] = id
             put_cache(cache)
             return id
-
 
 def query(id: str):
     s = ""
@@ -118,4 +120,32 @@ def _query(id: str):
             elif obj['cmd'] == 'userinfo':
                 userinfo = obj['data']
     scores.sort(key=cmp, reverse=True)
-    return song_title, userinfo, scores;
+    return song_title, userinfo, scores
+
+
+class QueryThread(threading.Thread):
+    def __init__(self, cmd, ctx, bot, state):
+        threading.Thread.__init__(self)
+        self.operation = cmd.name[0]
+        self.ctx = ctx
+        self.bot = bot
+        self.state = state
+
+    def run(self):
+        funcs = []
+        if self.operation == 'arcaea':
+            try:
+                message = query(self.state['id'])
+            except Exception as e:
+                message = "An exception occurred: %s" % repr(e)
+            funcs.append(self.bot.send(self.ctx, message=message))
+        elif self.operation == 'best':
+            try:
+                s = best(self.state['id'], self.state['num'])
+            except Exception as e:
+                s = ["An exception occurred: %s" % repr(e)]
+            for elem in s:
+                funcs.append(self.bot.send(self.ctx, message=elem))
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(asyncio.wait(funcs))
+        loop.close()
