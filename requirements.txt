@@ -3,7 +3,7 @@ aiocqhttp==1.2.5
 aiofiles==0.5.0
 blinker==1.4
 Brotli==1.0.7
-certifi==2020.6.20
+certifi==2022.12.7
 chardet==3.0.4
 click==7.1.2
 demjson==2.2.4
